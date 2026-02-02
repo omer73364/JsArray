@@ -94,4 +94,14 @@ class JsArray
 
         return new self($result);
     }
+
+    public function find(callable $callback)
+    {
+        foreach ($this->items as $key => $value) {
+            if ($callback($value, $key, $this)) {
+                return $value;
+            }
+        }
+        return null;
+    }
 }
