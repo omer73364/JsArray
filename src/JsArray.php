@@ -132,4 +132,14 @@ class JsArray
         }
         return false;
     }
+
+    public function some(callable $callback): bool
+    {
+        foreach ($this->items as $key => $value) {
+            if ($callback($value, $key, $this)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
