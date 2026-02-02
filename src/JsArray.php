@@ -43,4 +43,22 @@ class JsArray
 
         return new self($result);
     }
+
+    public function reduce(callable $callback, $initial = null)
+    {
+        $accumulator = $initial;
+        $first = true;
+
+        foreach ($this->items as $key => $value) {
+            if ($first && $initial === null) {
+                $accumulator = $value;
+                $first = false;
+                continue;
+            }
+            $accumulator = $callback($accumulator, $value, $key, $this);
+            $first = false;
+        }
+
+        return $accumulator;
+    }
 }
