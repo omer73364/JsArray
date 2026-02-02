@@ -152,4 +152,13 @@ class JsArray
         }
         return true;
     }
+
+    public function push(...$values): self
+    {
+        $result = $this->items;
+        foreach ($values as $value) {
+            $result[] = $value;
+        }
+        return new self($result);
+    }
 }
