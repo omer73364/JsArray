@@ -122,4 +122,14 @@ class JsArray
         }
         return array_keys($array) === range(0, count($array) - 1);
     }
+
+    public function includes($value): bool
+    {
+        foreach ($this->items as $item) {
+            if ($item === $value) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
