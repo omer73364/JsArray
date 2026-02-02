@@ -104,4 +104,22 @@ class JsArray
         }
         return null;
     }
+
+    public function findIndex(callable $callback)
+    {
+        foreach ($this->items as $key => $value) {
+            if ($callback($value, $key, $this)) {
+                return $this->isNumericArray($this->items) ? array_search($key, array_keys($this->items)) : $key;
+            }
+        }
+        return $this->isNumericArray($this->items) ? -1 : null;
+    }
+
+    private function isNumericArray(array $array): bool
+    {
+        if (empty($array)) {
+            return true;
+        }
+        return array_keys($array) === range(0, count($array) - 1);
+    }
 }
