@@ -142,4 +142,14 @@ class JsArray
         }
         return false;
     }
+
+    public function every(callable $callback): bool
+    {
+        foreach ($this->items as $key => $value) {
+            if (!$callback($value, $key, $this)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
