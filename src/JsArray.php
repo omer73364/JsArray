@@ -81,4 +81,17 @@ class JsArray
     {
         return $this->map($callback)->flat();
     }
+
+    public function concat(self ...$arrays): self
+    {
+        $result = $this->items;
+
+        foreach ($arrays as $array) {
+            foreach ($array->items as $value) {
+                $result[] = $value;
+            }
+        }
+
+        return new self($result);
+    }
 }
