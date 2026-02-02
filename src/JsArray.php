@@ -22,4 +22,13 @@ class JsArray
     {
         return new self($items);
     }
+
+    public function map(callable $callback): self
+    {
+        $result = [];
+        foreach ($this->items as $key => $value) {
+            $result[$key] = $callback($value, $key, $this);
+        }
+        return new self($result);
+    }
 }
