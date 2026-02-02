@@ -76,4 +76,9 @@ class JsArray
         }
         return new self($result);
     }
+
+    public function flatMap(callable $callback): self
+    {
+        return $this->map($callback)->flat();
+    }
 }
