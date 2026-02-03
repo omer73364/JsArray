@@ -149,6 +149,7 @@ $array->join(', ');                            // Join into string
 ```php
 $array->keys();                                // Get all keys
 $array->values();                              // Get all values
+$array->toArray();                              // to native php array
 $array->forEach(fn($item) => echo $item);     // Execute for each item
 $array->toImmutable(fn($item) => echo $item);     // Convert array to immutable
 $array->toMutable(fn($item) => echo $item);     // Convert array to mutable
