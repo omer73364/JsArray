@@ -19,7 +19,6 @@ JsArray brings the beloved JavaScript Array methods to PHP with:
 - ✅ **Full Type Safety** - PHP 8+ with complete type hints
 - ✅ **Flexible** - Choose immutable (safe) or mutable (fast) mode
 - ✅ **Pure PHP** - Zero dependencies, lightweight
-- ✅ **Well Tested** - 100+ test cases, 95%+ coverage
 
 ---
 
