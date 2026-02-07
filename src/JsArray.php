@@ -2,6 +2,10 @@
 
 namespace JsArray;
 
+use Countable;
+use Iterator;
+use JsonException;
+use JsonSerializable;
 use ReflectionFunction;
 
 /**
@@ -19,7 +23,7 @@ use ReflectionFunction;
  * @property-read int $length The number of elements in the array
  * @property-read bool $isMutable Whether array is in mutable mode
  */
-class JsArray
+class JsArray implements Countable, Iterator, JsonSerializable
 {
     /** @var array<mixed> The internal array storage */
     private array $items;
@@ -105,7 +109,7 @@ class JsArray
     public function __get(string $name): mixed
     {
         return match ($name) {
-            'length' => count($this->items),
+            'length' => $this->count(),
             'isMutable' => $this->mutable,
             'isImmutable' => !$this->mutable,
             default => throw new \InvalidArgumentException("Undefined property: {$name}")
@@ -936,5 +940,56 @@ class JsArray
         }
 
         return $items;
+    }
+
+    // ===== \Iterator implementation =====
+    public function current(): mixed
+    {
+        return current($this->items);
+    }
+
+    public function next(): void
+    {
+        next($this->items);
+    }
+
+    public function key(): int|string|null
+    {
+        return key($this->items);
+    }
+
+    public function valid(): bool
+    {
+        return key($this->items) !== null;
+    }
+
+    public function rewind(): void
+    {
+        reset($this->items);
+    }
+
+    // ===== \Countable implementation =====
+    public function count(): int
+    {
+        return count($this->items);
+    }
+
+    // ===== \JsonSerializable implementation =====
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Create a JsArray from a JSON string
+     *
+     * @param string $json
+     * @return self
+     * @throws JsonException if the JSON is invalid or does not decode to an array
+     */
+    public static function fromJson(string $json): self
+    {
+        $data = json_decode($json, true, flags: JSON_THROW_ON_ERROR);
+        return new self($data, false);
     }
 }
