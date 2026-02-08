@@ -1522,4 +1522,134 @@ class JsArrayTest extends TestCase
 
         $this->assertEquals(['Alice' => 30, 'Bob' => 25, 'Charlie' => 35], $result);
     }
+
+    // ===== \Iterator IMPLEMENTATION TESTS =====
+
+    public function testIteratorMethods(): void
+    {
+        $array = JsArray::from([10, 20, 30]);
+
+        // Initial state: current, key, valid
+        $this->assertEquals(10, $array->current());
+        $this->assertEquals(0, $array->key());
+        $this->assertTrue($array->valid());
+
+        // After first next()
+        $array->next();
+        $this->assertEquals(20, $array->current());
+        $this->assertEquals(1, $array->key());
+        $this->assertTrue($array->valid());
+
+        // After second next()
+        $array->next();
+        $this->assertEquals(30, $array->current());
+        $this->assertEquals(2, $array->key());
+        $this->assertTrue($array->valid());
+
+        // After third next() - past the end
+        $array->next();
+        $this->assertNull($array->current());
+        $this->assertFalse($array->valid());
+
+        // After rewind() - back to start
+        $array->rewind();
+        $this->assertEquals(10, $array->current());
+        $this->assertEquals(0, $array->key());
+        $this->assertTrue($array->valid());
+    }
+
+    /**
+     * @testWith [[10, 20, 30]]
+     *           [{"a": 1, "b": 2, "c": 3}]
+     */
+    public function testIteratorWithForeach(array $input): void
+    {
+        $array = JsArray::from($input);
+        $collected = [];
+        foreach ($array as $key => $value) {
+            $collected[$key] = $value;
+        }
+        $this->assertEquals($input, $collected);
+    }
+
+    public function testIteratorEmptyArray(): void
+    {
+        $array = JsArray::from([]);
+        foreach ($array as $value) {
+            $this->fail("Should not iterate over empty array");
+        }
+        $this->assertTrue(true);
+    }
+
+    public function testIteratorWithIteratorFunctions(): void
+    {
+        $input = [10, 20, 30];
+        $array = JsArray::from($input);
+        $this->assertEquals($input, iterator_to_array($array));
+    }
+
+    // ===== \Countable IMPLEMENTATION TESTS =====
+
+
+    /**
+     * @testWith [[1, 2, 3, 4, 5], 5]
+     *           [[], 0]
+     *           [{"a": 1, "b": 2, "c": 3}, 3]
+     */
+    public function testCountable(array $input, int $expectedCount): void
+    {
+        $array = JsArray::from($input);
+        $this->assertCount($expectedCount, $array);
+        $this->assertEquals($expectedCount, $array->count());
+        $this->assertEquals($expectedCount, $array->length);
+    }
+
+    // ===== \JsonSerializable IMPLEMENTATION TESTS =====
+
+    /**
+     * @testWith [[1, 2, 3], [1, 2, 3]]
+     *           [{"a": 1, "b": 2}, {"a": 1, "b": 2}]
+     *           [[], []]
+     */
+    public function testJsonSerialize(array $input, array $expected): void
+    {
+        $array = JsArray::from($input);
+        $this->assertEquals($expected, $array->jsonSerialize());
+    }
+
+    /**
+     * @testWith [[1, 2, 3], "[1,2,3]"]
+     *           [{"a": 1, "b": 2}, "{\"a\":1,\"b\":2}"]
+     *           [[], "[]"]
+     *           [[1, [2, 3], {"a": 4}], "[1,[2,3],{\"a\":4}]"]
+     *           [[1, "two", 3.14, true, null], "[1,\"two\",3.14,true,null]"]
+     */
+    public function testJsonEncode(array $input, string $expected): void
+    {
+        $array = JsArray::from($input);
+        $this->assertEquals($input, $array->jsonSerialize());
+        $this->assertEquals($expected, json_encode($array));
+    }
+
+    // ===== FROMJSON TESTS =====
+
+    /**
+     * @testWith ["[1, 2, 3]", [1, 2, 3]]
+     *           ["{\"a\": 1, \"b\": 2, \"c\": 3}", {"a": 1, "b": 2, "c": 3}]
+     *           ["[]", []]
+     *           ["{}", []]
+     *           ["[1, [2, 3], {\"a\": 4}]", [1, [2, 3], {"a": 4}]]
+     *           ["[1, \"two\", 3.14, true, null]", [1, "two", 3.14, true, null]]
+     */
+    public function testFromJson(string $json, array $expected): void
+    {
+        $array = JsArray::fromJson($json);
+        $this->assertEquals($expected, $array->toArray());
+    }
+
+    public function testFromJsonThrowsExceptionForInvalidJson(): void
+    {
+        $this->expectException(\JsonException::class);
+        JsArray::fromJson('invalid json');
+    }
 }
