@@ -224,14 +224,14 @@ $array->join(', ');                            // Join into string
 **Other**
 
 ```php
-$array->keys();                                // Get all keys
-$array->values();                              // Get all values
-$array->toArray();                              // to native php array
-$array->forEach(fn($item) => echo $item);     // Execute for each item
-$array->toImmutable(fn($item) => echo $item);     // Convert array to immutable
-$array->toMutable(fn($item) => echo $item);     // Convert array to mutable
-$array->getMutableCopy(fn($item) => echo $item);     // Create new mutable copy of array
-$array->getImmutableCopy(fn($item) => echo $item);     // Create new immutable copy of array
+$array->keys();                 // Get all keys
+$array->values();               // Get all values
+$array->toArray();              // Convert to native PHP array
+$array->forEach(fn($item) => echo $item);          // Execute for each item
+$array->toImmutable();          // Convert array to immutable
+$array->toMutable();            // Convert array to mutable
+$array->getMutableCopy();       // Create new mutable copy of array
+$array->getImmutableCopy();     // Create new immutable copy of array
 ```
 
 ---
